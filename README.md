@@ -6,6 +6,8 @@ This project is a simple bot that replies to comments on Lemmy. Every 10 seconds
 
 This repo contains a file called `lemmy-reply-bot.example.toml`. This is an example config file. Copy it to `lemmy-reply-bot.toml` and edit it to fit your needs. The config contains your password, so its permissions must be set to 600 or the bot will refuse to start.
 
+This bot uses PCRE2 for regular expressions, so you can use any of PCRE2's features, and [Regex101](https://regex101.com/) in PCRE2 mode for testing.
+
 If any regular expressions configured in the file also match the reply messages, the bot will refuse to start because this may cause an infinite loop.
 
 ### Debugging
