@@ -13,3 +13,27 @@ If any regular expressions configured in the file also match the reply messages,
 ### Debugging
 
 In order to enable debug log messages, set `LEMMY_REPLY_BOT_DEBUG=1`.
+
+### Building and Running
+
+First, make sure Go 1.18 or newer is installed on your system. Older versions will not work.
+
+If you are planning to run it on the same machine as the one you're building on, simply run 
+
+```
+go build
+```
+
+And then you can start the bot with
+
+```
+./lemmy-reply-bot
+```
+
+If you want to run it on a different machine than the one you're building on, for example, a Raspberry Pi, you can build it like this:
+
+```
+GOARCH=arm64 go build
+```
+
+If your raspberry pi is 32-bit, use `arm` instead of `arm64`. Then, you can run it the same way I described above.
