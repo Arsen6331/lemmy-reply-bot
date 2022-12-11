@@ -1,6 +1,6 @@
 # Lemmy Reply Bot
 
-This project is a simple bot that replies to comments on Lemmy. Every 10 seconds, it fetches the 200 newest comments from your configure Lemmy instance, and sees if they match any regex configured in the config file. If it finds one that does, it replies with the message corresponding to that regex.
+This project is a simple bot that replies to comments on Lemmy. Every 10 seconds, it fetches the 200 newest comments from your configured Lemmy instance, and sees if they match any regex configured in the config file. If it finds one that does, it replies with the message corresponding to that regex.
 
 ### Configuration
 
