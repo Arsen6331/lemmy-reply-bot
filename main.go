@@ -109,13 +109,16 @@ func commentWorker(ctx context.Context, c *lemmy.Client, replyCh chan<- replyJob
 					job.Content = expandStr(reply.Msg, func(s string) string {
 						i, err := strconv.Atoi(s)
 						if err != nil {
+							log.Debug("Message variable is not an integer, returning empty string").Str("var", s).Send()
 							return ""
 						}
 
-						if len(matches) > i+1 {
+						if i+1 > len(matches) {
+							log.Debug("Message variable exceeds match length").Int("length", len(matches)).Int("var", i).Send()
 							return ""
 						}
 
+						log.Debug("Message variable found, returning").Int("var", i).Str("found", matches[i]).Send()
 						return matches[i]
 					})
 

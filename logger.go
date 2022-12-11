@@ -22,34 +22,27 @@ type retryableLogger struct{}
 
 func (retryableLogger) Error(msg string, v ...any) {
 	msgs := splitMsgs(v)
-	log.Error(msg).
-		Str("method", msgs["method"].(string)).
-		Stringer("url", msgs["url"].(fmt.Stringer)).
-		Send()
+	evt := log.Error(msg)
+	sendEvt(evt, msgs)
 }
 
 func (retryableLogger) Info(msg string, v ...any) {
 	msgs := splitMsgs(v)
-	log.Info(msg).
-		Str("method", msgs["method"].(string)).
-		Stringer("url", msgs["url"].(fmt.Stringer)).
-		Send()
+	evt := log.Info(msg)
+	sendEvt(evt, msgs)
+
 }
 
 func (retryableLogger) Debug(msg string, v ...any) {
 	msgs := splitMsgs(v)
-	log.Debug(msg).
-		Str("method", msgs["method"].(string)).
-		Stringer("url", msgs["url"].(fmt.Stringer)).
-		Send()
+	evt := log.Debug(msg)
+	sendEvt(evt, msgs)
 }
 
 func (retryableLogger) Warn(msg string, v ...any) {
 	msgs := splitMsgs(v)
-	log.Warn(msg).
-		Str("method", msgs["method"].(string)).
-		Stringer("url", msgs["url"].(fmt.Stringer)).
-		Send()
+	evt := log.Warn(msg)
+	sendEvt(evt, msgs)
 }
 
 func splitMsgs(v []any) map[string]any {
@@ -64,4 +57,20 @@ func splitMsgs(v []any) map[string]any {
 	}
 
 	return out
+}
+
+func sendEvt(evt logger.LogBuilder, msgs map[string]any) {
+	for name, val := range msgs {
+		switch val := val.(type) {
+		case int:
+			evt = evt.Int(name, val)
+		case string:
+			evt = evt.Str(name, val)
+		case fmt.Stringer:
+			evt = evt.Stringer(name, val)
+		default:
+			evt = evt.Any(name, val)
+		}
+	}
+	evt.Send()
 }
