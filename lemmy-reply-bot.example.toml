@@ -1,0 +1,12 @@
+[lemmy]
+instanceURL = "https://lemmy.ml"
+
+[lemmy.account]
+userOrEmail = "user@example.com"
+password = "ExamplePassword123"
+
+# Replies to any message starting with "!!BOT_TEST" with everything
+# after "!!BOT_TEST"
+[[reply]]
+regex = "!!BOT_TEST (.*)"
+msg = "$1"
