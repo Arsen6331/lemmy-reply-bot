@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-	"time"
 
 	"github.com/spf13/pflag"
 	"github.com/vmihailenco/msgpack/v5"
