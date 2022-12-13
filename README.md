@@ -2,6 +2,14 @@
 
 This project is a simple bot that replies to comments on Lemmy. It uses Lemmy's WebSocket to get notified of any new comments, and sees if they match any regex configured in the config file. If it finds one that does, it replies with the message corresponding to that regex.
 
+### Features
+
+- Multiple replies in a single bot instance
+- Powerful PCRE2 regular expressions for detecting triggers
+- Ability to use regex capture groups in replies
+- Persistent duplicate reply prevention via a filesystem store
+- Uses event-based WebSocket API, which means near-instant replies and no rate limiting
+
 ### Configuration
 
 This repo contains a file called `lemmy-reply-bot.example.toml`. This is an example config file. Copy it to `lemmy-reply-bot.toml` and edit it to fit your needs. The config contains your password, so its permissions must be set to 600 or the bot will refuse to start.
