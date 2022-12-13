@@ -78,8 +78,6 @@ func commentWorker(ctx context.Context, c *lemmy.WSClient, replyCh chan<- replyJ
 		repliedStore.Close()
 	}
 
-	ticker := time.NewTicker(10 * time.Second)
-	defer ticker.Stop()
 	for {
 		select {
 		case res := <-c.Responses():
