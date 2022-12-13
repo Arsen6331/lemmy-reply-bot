@@ -45,22 +45,17 @@ func main() {
 
 	log.Info("Successfully logged in to Lemmy instance").Send()
 
-	c.SetConnectHandler(func() error {
-		err = c.Request(types.UserOpUserJoin, nil)
-		if err != nil {
-			log.Fatal("Error joining WebSocket user context").Err(err).Send()
-		}
+	err = c.Request(types.UserOpUserJoin, nil)
+	if err != nil {
+		log.Fatal("Error joining WebSocket user context").Err(err).Send()
+	}
 
-		err = c.Request(types.UserOpCommunityJoin, types.CommunityJoin{
-			CommunityID: 0,
-		})
-		if err != nil {
-			log.Fatal("Error joining WebSocket community context").Err(err).Send()
-		}
-		return nil
+	err = c.Request(types.UserOpCommunityJoin, types.CommunityJoin{
+		CommunityID: 0,
 	})
-
-	c.ConnectHandler()
+	if err != nil {
+		log.Fatal("Error joining WebSocket community context").Err(err).Send()
+	}
 
 	replyCh := make(chan replyJob, 200)
 
