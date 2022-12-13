@@ -5,11 +5,10 @@ go 1.19
 //replace go.arsenm.dev/go-lemmy => /home/arsen/Code/go-lemmy
 
 require (
-	github.com/hashicorp/go-retryablehttp v0.7.1
 	github.com/pelletier/go-toml/v2 v2.0.6
 	github.com/spf13/pflag v1.0.5
 	github.com/vmihailenco/msgpack/v5 v5.3.5
-	go.arsenm.dev/go-lemmy v0.0.0-20221210234052-7fc04591ba51
+	go.arsenm.dev/go-lemmy v0.0.0-20221213021222-a4a015a4cc2a
 	go.arsenm.dev/logger v0.0.0-20221007032343-cbffce4f4334
 	go.arsenm.dev/pcre v0.0.0-20220530205550-74594f6c8b0e
 )
@@ -18,8 +17,10 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gookit/color v1.5.1 // indirect
-	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/recws-org/recws v1.4.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect

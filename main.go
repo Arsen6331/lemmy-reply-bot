@@ -9,7 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/hashicorp/go-retryablehttp"
 	"github.com/spf13/pflag"
 	"github.com/vmihailenco/msgpack/v5"
 	"go.arsenm.dev/go-lemmy"
@@ -31,10 +30,7 @@ func main() {
 		log.Fatal("Error loading config file").Err(err).Send()
 	}
 
-	rhc := retryablehttp.NewClient()
-	rhc.Logger = retryableLogger{}
-
-	c, err := lemmy.NewWithClient(cfg.Lemmy.InstanceURL, rhc.StandardClient())
+	c, err := lemmy.NewWebSocket(cfg.Lemmy.InstanceURL)
 	if err != nil {
 		log.Fatal("Error creating new Lemmy API client").Err(err).Send()
 	}
@@ -49,6 +45,18 @@ func main() {
 
 	log.Info("Successfully logged in to Lemmy instance").Send()
 
+	err = c.Request(types.UserOpUserJoin, nil)
+	if err != nil {
+		log.Fatal("Error joining WebSocket user context").Err(err).Send()
+	}
+
+	err = c.Request(types.UserOpCommunityJoin, types.CommunityJoin{
+		CommunityID: 0,
+	})
+	if err != nil {
+		log.Fatal("Error joining WebSocket community context").Err(err).Send()
+	}
+
 	replyCh := make(chan replyJob, 200)
 
 	if !*dryRun {
@@ -58,7 +66,7 @@ func main() {
 	commentWorker(ctx, c, replyCh)
 }
 
-func commentWorker(ctx context.Context, c *lemmy.Client, replyCh chan<- replyJob) {
+func commentWorker(ctx context.Context, c *lemmy.WSClient, replyCh chan<- replyJob) {
 	repliedIDs := map[int]struct{}{}
 
 	repliedStore, err := os.Open("replied.bin")
@@ -74,38 +82,38 @@ func commentWorker(ctx context.Context, c *lemmy.Client, replyCh chan<- replyJob
 	defer ticker.Stop()
 	for {
 		select {
-		case <-ticker.C:
-			cr, err := c.Comments(ctx, types.GetComments{
-				Sort:  types.NewOptional(types.CommentSortNew),
-				Limit: types.NewOptional(200),
-			})
-			if err != nil {
-				log.Warn("Error while trying to get comments").Err(err).Send()
-				continue
-			}
+		case res := <-c.Responses():
+			// Check which operation has been sent from the server
+			switch res.Op {
+			case types.UserOpCreateComment, types.UserOpEditComment:
+				var cr types.CommentResponse
+				err = lemmy.DecodeResponse(res.Data, &cr)
+				if err != nil {
+					log.Warn("Error while trying to decode comment").Err(err).Send()
+					continue
+				}
 
-			for _, commentView := range cr.Comments {
-				if _, ok := repliedIDs[commentView.Comment.ID]; ok {
+				if _, ok := repliedIDs[cr.CommentView.Comment.ID]; ok {
 					continue
 				}
 
 				for i, reply := range cfg.Replies {
 					re := compiledRegexes[reply.Regex]
-					if !re.MatchString(commentView.Comment.Content) {
+					if !re.MatchString(cr.CommentView.Comment.Content) {
 						continue
 					}
 
 					log.Info("Matched comment body").
 						Int("reply-index", i).
-						Int("comment-id", commentView.Comment.ID).
+						Int("comment-id", cr.CommentView.Comment.ID).
 						Send()
 
 					job := replyJob{
-						CommentID: commentView.Comment.ID,
-						PostID:    commentView.Comment.PostID,
+						CommentID: cr.CommentView.Comment.ID,
+						PostID:    cr.CommentView.Comment.PostID,
 					}
 
-					matches := re.FindStringSubmatch(commentView.Comment.Content)
+					matches := re.FindStringSubmatch(cr.CommentView.Comment.Content)
 					job.Content = expandStr(reply.Msg, func(s string) string {
 						i, err := strconv.Atoi(s)
 						if err != nil {
@@ -124,7 +132,7 @@ func commentWorker(ctx context.Context, c *lemmy.Client, replyCh chan<- replyJob
 
 					replyCh <- job
 
-					repliedIDs[commentView.Comment.ID] = struct{}{}
+					repliedIDs[cr.CommentView.Comment.ID] = struct{}{}
 				}
 			}
 		case <-ctx.Done():
@@ -151,11 +159,11 @@ type replyJob struct {
 	PostID    int
 }
 
-func commentReplyWorker(ctx context.Context, c *lemmy.Client, ch <-chan replyJob) {
+func commentReplyWorker(ctx context.Context, c *lemmy.WSClient, ch <-chan replyJob) {
 	for {
 		select {
 		case reply := <-ch:
-			cr, err := c.CreateComment(ctx, types.CreateComment{
+			err := c.Request(types.UserOpCreateComment, types.CreateComment{
 				PostID:   reply.PostID,
 				ParentID: types.NewOptional(reply.CommentID),
 				Content:  reply.Content,
@@ -167,11 +175,7 @@ func commentReplyWorker(ctx context.Context, c *lemmy.Client, ch <-chan replyJob
 			log.Info("Created new comment").
 				Int("post-id", reply.PostID).
 				Int("parent-id", reply.CommentID).
-				Int("comment-id", cr.CommentView.Comment.ID).
 				Send()
-
-			// Make sure requests don't happen too quickly
-			time.Sleep(1 * time.Second)
 		case <-ctx.Done():
 			return
 		}
