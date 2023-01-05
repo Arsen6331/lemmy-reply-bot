@@ -41,8 +41,8 @@ github.com/vmihailenco/tagparser/v2 v2.0.0/go.mod h1:Wri+At7QHww0WTrCBeu4J6bNtoV
 github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 h1:QldyIu/L63oPpyvQmHgvgickp1Yw510KJOqX7H24mg8=
 github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778/go.mod h1:2MuV+tbUrU1zIOPMxZ5EncGwgmMJsa+9ucAQZXxsObs=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
-go.arsenm.dev/go-lemmy v0.0.0-20221213090943-92b96981e2e1 h1:SY7BxO21feXrg5zWYbvIfZ3vuz8qvODjR39kOlKwTbc=
-go.arsenm.dev/go-lemmy v0.0.0-20221213090943-92b96981e2e1/go.mod h1:q7CIDksHIqltFNugJAixGTqk1Gp+a9emZMlILhU7Uh0=
+go.arsenm.dev/go-lemmy v0.0.0-20230105214607-754cfa602c10 h1:aQYXs2KVWztLLZ3i9tIH/rS3X4TllS0jXI8twJhJMtk=
+go.arsenm.dev/go-lemmy v0.0.0-20230105214607-754cfa602c10/go.mod h1:Br91zaVgauLWmj4sgk600XiD8297NpBTESULvGwMTdU=
 go.arsenm.dev/logger v0.0.0-20221007032343-cbffce4f4334 h1:S98LJOBmj1pAKSw94spJk6+n8ERlBNTxi4lt5B67nQo=
 go.arsenm.dev/logger v0.0.0-20221007032343-cbffce4f4334/go.mod h1:RV2qydKDdoyaRkhAq8JEGvojR8eJ6bjq5WnSIlH7gYw=
 go.arsenm.dev/pcre v0.0.0-20220530205550-74594f6c8b0e h1:4XwLmFDvAKt7ZvS3E3hD2R++0wr75fBUEvXkK9dLXzk=

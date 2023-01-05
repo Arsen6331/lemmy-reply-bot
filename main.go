@@ -34,7 +34,7 @@ func main() {
 		log.Fatal("Error creating new Lemmy API client").Err(err).Send()
 	}
 
-	err = c.Login(ctx, types.Login{
+	err = c.ClientLogin(ctx, types.Login{
 		UsernameOrEmail: cfg.Lemmy.Account.UserOrEmail,
 		Password:        cfg.Lemmy.Account.Password,
 	})
@@ -44,12 +44,12 @@ func main() {
 
 	log.Info("Successfully logged in to Lemmy instance").Send()
 
-	err = c.Request(types.UserOpUserJoin, nil)
+	err = c.Request(types.UserOperationUserJoin, nil)
 	if err != nil {
 		log.Fatal("Error joining WebSocket user context").Err(err).Send()
 	}
 
-	err = c.Request(types.UserOpCommunityJoin, types.CommunityJoin{
+	err = c.Request(types.UserOperationCommunityJoin, types.CommunityJoin{
 		CommunityID: 0,
 	})
 	if err != nil {
@@ -80,9 +80,7 @@ func commentWorker(ctx context.Context, c *lemmy.WSClient, replyCh chan<- replyJ
 	for {
 		select {
 		case res := <-c.Responses():
-			// Check which operation has been sent from the server
-			switch res.Op {
-			case types.UserOpCreateComment, types.UserOpEditComment:
+			if res.IsOneOf(types.UserOperationCrudCreateComment, types.UserOperationCrudEditComment) {
 				var cr types.CommentResponse
 				err = lemmy.DecodeResponse(res.Data, &cr)
 				if err != nil {
@@ -160,7 +158,7 @@ func commentReplyWorker(ctx context.Context, c *lemmy.WSClient, ch <-chan replyJ
 	for {
 		select {
 		case reply := <-ch:
-			err := c.Request(types.UserOpCreateComment, types.CreateComment{
+			err := c.Request(types.UserOperationCrudCreateComment, types.CreateComment{
 				PostID:   reply.PostID,
 				ParentID: types.NewOptional(reply.CommentID),
 				Content:  reply.Content,
@@ -180,7 +178,7 @@ func commentReplyWorker(ctx context.Context, c *lemmy.WSClient, ch <-chan replyJ
 }
 
 func expandStr(s string, mapping func(string) string) string {
-	strings.ReplaceAll(s, "$$", "${_escaped_dollar_symbol}")
+	s = strings.ReplaceAll(s, "$$", "${_escaped_dollar_symbol}")
 	return os.Expand(s, func(s string) string {
 		if s == "_escaped_dollar_symbol" {
 			return "$"
