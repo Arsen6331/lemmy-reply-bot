@@ -41,10 +41,10 @@ github.com/vmihailenco/tagparser/v2 v2.0.0/go.mod h1:Wri+At7QHww0WTrCBeu4J6bNtoV
 github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 h1:QldyIu/L63oPpyvQmHgvgickp1Yw510KJOqX7H24mg8=
 github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778/go.mod h1:2MuV+tbUrU1zIOPMxZ5EncGwgmMJsa+9ucAQZXxsObs=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
-go.arsenm.dev/go-lemmy v0.0.0-20230105214607-754cfa602c10 h1:aQYXs2KVWztLLZ3i9tIH/rS3X4TllS0jXI8twJhJMtk=
-go.arsenm.dev/go-lemmy v0.0.0-20230105214607-754cfa602c10/go.mod h1:Br91zaVgauLWmj4sgk600XiD8297NpBTESULvGwMTdU=
-go.arsenm.dev/logger v0.0.0-20221007032343-cbffce4f4334 h1:S98LJOBmj1pAKSw94spJk6+n8ERlBNTxi4lt5B67nQo=
-go.arsenm.dev/logger v0.0.0-20221007032343-cbffce4f4334/go.mod h1:RV2qydKDdoyaRkhAq8JEGvojR8eJ6bjq5WnSIlH7gYw=
+go.arsenm.dev/go-lemmy v0.16.7 h1:aY343U5AMFryffRO9PsKPBMLKAl91WdwmlCYXW3TdGM=
+go.arsenm.dev/go-lemmy v0.16.7/go.mod h1:Ytr6kiml1hmSvTHvOz+qV79HSNS4FtIynJfj8KWmT5Q=
+go.arsenm.dev/logger v0.0.0-20230104225304-d706171ea6df h1:8mBHvEe7BJmpOeKSMA5YLqrGo9dCpePocTeR0C1+/2w=
+go.arsenm.dev/logger v0.0.0-20230104225304-d706171ea6df/go.mod h1:RV2qydKDdoyaRkhAq8JEGvojR8eJ6bjq5WnSIlH7gYw=
 go.arsenm.dev/pcre v0.0.0-20220530205550-74594f6c8b0e h1:4XwLmFDvAKt7ZvS3E3hD2R++0wr75fBUEvXkK9dLXzk=
 go.arsenm.dev/pcre v0.0.0-20220530205550-74594f6c8b0e/go.mod h1:c/E0D60A6rRLoDLh6mLUdFV9gxyth+CnXnqGHos2CAQ=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
@@ -62,8 +62,9 @@ golang.org/x/sys v0.0.0-20200116001909-b77594299b42/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac h1:oN6lz7iLW/YC7un8pq+9bOLyXrprv2+DKfkJY+2LJJw=
 golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.1.0 h1:kunALQeHf1/185U1i0GOB/fy1IPRDDpuoOOqRReG57U=
+golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
 golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=

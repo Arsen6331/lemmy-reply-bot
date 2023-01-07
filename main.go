@@ -80,7 +80,7 @@ func commentWorker(ctx context.Context, c *lemmy.WSClient, replyCh chan<- replyJ
 	for {
 		select {
 		case res := <-c.Responses():
-			if res.IsOneOf(types.UserOperationCrudCreateComment, types.UserOperationCrudEditComment) {
+			if res.IsOneOf(types.UserOperationCRUDCreateComment, types.UserOperationCRUDEditComment) {
 				var cr types.CommentResponse
 				err = lemmy.DecodeResponse(res.Data, &cr)
 				if err != nil {
@@ -158,7 +158,7 @@ func commentReplyWorker(ctx context.Context, c *lemmy.WSClient, ch <-chan replyJ
 	for {
 		select {
 		case reply := <-ch:
-			err := c.Request(types.UserOperationCrudCreateComment, types.CreateComment{
+			err := c.Request(types.UserOperationCRUDCreateComment, types.CreateComment{
 				PostID:   reply.PostID,
 				ParentID: types.NewOptional(reply.CommentID),
 				Content:  reply.Content,
