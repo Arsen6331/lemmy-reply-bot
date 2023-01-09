@@ -2,18 +2,19 @@ module go.arsenm.dev/lemmy-reply-bot
 
 go 1.19
 
-//replace go.arsenm.dev/go-lemmy => /home/arsen/Code/go-lemmy
+replace go.arsenm.dev/go-lemmy => /home/arsen/Code/go-lemmy
 
 require (
 	github.com/pelletier/go-toml/v2 v2.0.6
 	github.com/spf13/pflag v1.0.5
 	github.com/vmihailenco/msgpack/v5 v5.3.5
-	go.arsenm.dev/go-lemmy v0.16.7
+	go.arsenm.dev/go-lemmy v0.16.8-0.20230109205406-c0aced05f0cd
 	go.arsenm.dev/logger v0.0.0-20230104225304-d706171ea6df
 	go.arsenm.dev/pcre v0.0.0-20220530205550-74594f6c8b0e
 )
 
 require (
+	github.com/cenkalti/backoff/v4 v4.2.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gookit/color v1.5.1 // indirect

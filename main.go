@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"strconv"
@@ -44,17 +45,12 @@ func main() {
 
 	log.Info("Successfully logged in to Lemmy instance").Send()
 
-	err = c.Request(types.UserOperationUserJoin, nil)
-	if err != nil {
-		log.Fatal("Error joining WebSocket user context").Err(err).Send()
-	}
+	joinAll(c)
 
-	err = c.Request(types.UserOperationCommunityJoin, types.CommunityJoin{
-		CommunityID: 0,
+	c.OnReconnect(func(c *lemmy.WSClient) {
+		joinAll(c)
+		log.Info("Successfully reconnected to WebSocket").Send()
 	})
-	if err != nil {
-		log.Fatal("Error joining WebSocket community context").Err(err).Send()
-	}
 
 	replyCh := make(chan replyJob, 200)
 
@@ -130,6 +126,9 @@ func commentWorker(ctx context.Context, c *lemmy.WSClient, replyCh chan<- replyJ
 					repliedIDs[cr.CommentView.Comment.ID] = struct{}{}
 				}
 			}
+		case err := <-c.Errors():
+			fmt.Printf("%T\n", err)
+			log.Warn("Lemmy client error").Err(err).Send()
 		case <-ctx.Done():
 			repliedStore, err := os.Create("replied.bin")
 			if err != nil {
@@ -185,4 +184,18 @@ func expandStr(s string, mapping func(string) string) string {
 		}
 		return mapping(s)
 	})
+}
+
+func joinAll(c *lemmy.WSClient) {
+	err := c.Request(types.UserOperationUserJoin, nil)
+	if err != nil {
+		log.Fatal("Error joining WebSocket user context").Err(err).Send()
+	}
+
+	err = c.Request(types.UserOperationCommunityJoin, types.CommunityJoin{
+		CommunityID: 0,
+	})
+	if err != nil {
+		log.Fatal("Error joining WebSocket community context").Err(err).Send()
+	}
 }
