@@ -9,4 +9,4 @@ password = "ExamplePassword123"
 # after "!!BOT_TEST"
 [[reply]]
 regex = "!!BOT_TEST (.*)"
-msg = "$1"
+msg = "{{match . 0 1}}"
