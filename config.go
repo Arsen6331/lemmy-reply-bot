@@ -3,7 +3,10 @@ package main
 import (
 	"net/url"
 	"os"
+	"strconv"
+	"text/template"
 
+	"github.com/Masterminds/sprig"
 	"github.com/pelletier/go-toml/v2"
 	"go.arsenm.dev/logger/log"
 	"go.arsenm.dev/pcre"
@@ -28,6 +31,7 @@ type Reply struct {
 var (
 	cfg             = Config{}
 	compiledRegexes = map[string]*pcre.Regexp{}
+	compiledTmpls   = map[string]*template.Template{}
 )
 
 func loadConfig(path string) error {
@@ -50,7 +54,7 @@ func loadConfig(path string) error {
 		return err
 	}
 
-	err = compileRegexes(cfg.Replies)
+	err = compileReplies(cfg.Replies)
 	if err != nil {
 		return err
 	}
@@ -59,8 +63,8 @@ func loadConfig(path string) error {
 	return nil
 }
 
-func compileRegexes(replies []Reply) error {
-	for _, reply := range replies {
+func compileReplies(replies []Reply) error {
+	for i, reply := range replies {
 		if _, ok := compiledRegexes[reply.Regex]; ok {
 			continue
 		}
@@ -70,6 +74,16 @@ func compileRegexes(replies []Reply) error {
 			return err
 		}
 		compiledRegexes[reply.Regex] = re
+
+		tmpl, err := template.
+			New(strconv.Itoa(i)).
+			Funcs(tmplFuncs).
+			Funcs(sprig.TxtFuncMap()).
+			Parse(reply.Msg)
+		if err != nil {
+			return err
+		}
+		compiledTmpls[reply.Regex] = tmpl
 	}
 	return nil
 }

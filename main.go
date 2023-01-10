@@ -2,12 +2,11 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
-	"strconv"
 	"strings"
 	"syscall"
+	"text/template"
 
 	"github.com/spf13/pflag"
 	"github.com/vmihailenco/msgpack/v5"
@@ -104,22 +103,12 @@ func commentWorker(ctx context.Context, c *lemmy.WSClient, replyCh chan<- replyJ
 						PostID:    cr.CommentView.Comment.PostID,
 					}
 
-					matches := re.FindStringSubmatch(cr.CommentView.Comment.Content)
-					job.Content = expandStr(reply.Msg, func(s string) string {
-						i, err := strconv.Atoi(s)
-						if err != nil {
-							log.Debug("Message variable is not an integer, returning empty string").Str("var", s).Send()
-							return ""
-						}
-
-						if i+1 > len(matches) {
-							log.Debug("Message variable exceeds match length").Int("length", len(matches)).Int("var", i).Send()
-							return ""
-						}
-
-						log.Debug("Message variable found, returning").Int("var", i).Str("found", matches[i]).Send()
-						return matches[i]
-					})
+					matches := re.FindAllStringSubmatch(cr.CommentView.Comment.Content, -1)
+					job.Content, err = executeTmpl(compiledTmpls[reply.Regex], matches)
+					if err != nil {
+						log.Warn("Error while executing template").Err(err).Send()
+						continue
+					}
 
 					replyCh <- job
 
@@ -127,7 +116,6 @@ func commentWorker(ctx context.Context, c *lemmy.WSClient, replyCh chan<- replyJ
 				}
 			}
 		case err := <-c.Errors():
-			fmt.Printf("%T\n", err)
 			log.Warn("Lemmy client error").Err(err).Send()
 		case <-ctx.Done():
 			repliedStore, err := os.Create("replied.bin")
@@ -176,14 +164,10 @@ func commentReplyWorker(ctx context.Context, c *lemmy.WSClient, ch <-chan replyJ
 	}
 }
 
-func expandStr(s string, mapping func(string) string) string {
-	s = strings.ReplaceAll(s, "$$", "${_escaped_dollar_symbol}")
-	return os.Expand(s, func(s string) string {
-		if s == "_escaped_dollar_symbol" {
-			return "$"
-		}
-		return mapping(s)
-	})
+func executeTmpl(tmpl *template.Template, matches [][]string) (string, error) {
+	sb := &strings.Builder{}
+	err := tmpl.Execute(sb, matches)
+	return sb.String(), err
 }
 
 func joinAll(c *lemmy.WSClient) {
